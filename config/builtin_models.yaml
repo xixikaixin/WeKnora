@@ -1,0 +1,23 @@
+builtin_models:
+  - id: builtin-minimax-chat
+    name: ${MINIMAX_MODEL}
+    type: KnowledgeQA
+    source: remote
+    description: MiniMax for standalone knowledge Q&A
+    is_default: true
+    parameters:
+      base_url: ${MINIMAX_BASE_URL}
+      api_key: ${MINIMAX_API_KEY}
+      provider: minimax
+
+  - id: builtin-bge-m3
+    name: bge-m3
+    type: Embedding
+    source: local
+    description: Local multilingual embeddings via Ollama
+    is_default: true
+    parameters:
+      base_url: http://host.docker.internal:11434
+      embedding_parameters:
+        dimension: 1024
+        truncate_prompt_tokens: 0

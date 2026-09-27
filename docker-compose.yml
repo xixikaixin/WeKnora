@@ -50,7 +50,7 @@ services:
       # Optional: declarative built-in models. Copy config/builtin_models.yaml.example
       # to config/builtin_models.yaml, edit it for your deployment, then
       # uncomment the line below. See docs/BUILTIN_MODELS.md.
-      # - ./config/builtin_models.yaml:/app/config/builtin_models.yaml:ro
+      - ./config/builtin_models.yaml:/app/config/builtin_models.yaml:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
@@ -377,6 +377,8 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      # Local proxy DNS returns a reserved fake IP; pin MiniMax to its public HTTPS endpoint.
+      - "api.minimaxi.com:47.79.2.234"
 
   # Sandbox 镜像：仅用于 build/pull，非常驻。Docker 沙箱默认关闭，需
   # WEKNORA_SANDBOX_DOCKER_ENABLED=true 并挂载 docker.sock 后，app 才会按会话创建容器。

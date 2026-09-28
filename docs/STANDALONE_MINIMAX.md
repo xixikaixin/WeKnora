@@ -13,13 +13,22 @@ MINIMAX_BASE_URL=https://api.minimaxi.com/v1
 MINIMAX_API_KEY=请填写自己的密钥
 ```
 
-`config/builtin_models.yaml` 将 MiniMax 设为默认对话模型，将本机 Ollama 的 `bge-m3` 设为默认向量模型。启动前须在本机准备好 Ollama 与 `bge-m3`，然后按照上游部署文档启动 WeKnora。
+`config/builtin_models.yaml` 将 MiniMax 设为默认对话模型，将本机 Ollama 的 `bge-m3` 设为默认向量模型，并登记 `qwen2.5vl:3b` 作为扫描文档的视觉模型。启动前须在运行 Ollama 的机器上准备好这些模型：
+
+```sh
+ollama pull bge-m3
+ollama pull qwen2.5vl:3b
+```
+
+随后按照上游部署文档启动 WeKnora。视觉模型约需 3.2 GB 下载空间。部署到服务器时，模型下载到运行 Ollama 的服务器，不会下载到网站访问者设备。
 
 `docker-compose.yml` 中 `api.minimaxi.com` 的固定地址只用于绕过当前机器代理 DNS 返回的保留地址；公网 IP 变化后需重新核实，不能把它当作长期有效的地址。
 
 ## 界面设置与验收
 
 在 WeKnora 界面中创建知识库、上传资料，并确认“快速问答”的对话模型已选择 MiniMax。可上传 `website-docs/sample-data/weknora-kb-acceptance-sample.md` 测试事实、条件、例外和资料未覆盖时的回答。
+
+扫描版 PDF 没有可直接提取的文字。上传前在知识库设置 → 图像处理启用多模态并选择 `qwen2.5vl:3b`；已上传的文件还须在“重建知识”的图像处理配置中开启多模态并选择该模型，重新解析后检查分块中是否出现真实文字。仅显示“解析完成”不足以证明扫描文字已入库。
 
 知识库、智能体模型绑定及上传资料保存在数据库和存储卷里，Git 只保存上述可复用配置与示例资料。重新部署后，需要在界面中核对这些设置。
 

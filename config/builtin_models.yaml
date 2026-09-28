@@ -21,3 +21,12 @@ builtin_models:
       embedding_parameters:
         dimension: 1024
         truncate_prompt_tokens: 0
+
+  - id: builtin-qwen2-5-vl-3b
+    name: qwen2.5vl:3b
+    type: VLLM
+    source: local
+    description: Local vision and OCR for scanned documents via Ollama
+    parameters:
+      base_url: http://host.docker.internal:11434
+      interface_type: ollama

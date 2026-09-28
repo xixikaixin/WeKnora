@@ -40,13 +40,14 @@ FRONTEND_PORT=127.0.0.1:8081
 APP_PORT=127.0.0.1:8080
 FRONTEND_BASE_URL=https://kb.example.com
 DISABLE_REGISTRATION=false
+LANGFUSE_ENABLED=false
 DB_PASSWORD=换成独立的随机密码
 REDIS_PASSWORD=换成独立的随机密码
 JWT_SECRET=换成独立的随机密钥
 SYSTEM_AES_KEY=换成恰好32个ASCII字符的密钥
 ```
 
-可以用 `openssl rand -hex 24` 生成数据库和 Redis 密码、`openssl rand -hex 32` 生成 JWT 密钥、`openssl rand -hex 16` 生成 **32 字符**的 `SYSTEM_AES_KEY`。妥善备份 `SYSTEM_AES_KEY`；更换它会导致数据库里已加密的模型 API Key 无法解密。`.env` 已被 Git 忽略，不要提交。
+可以用 `openssl rand -hex 24` 生成数据库和 Redis 密码、`openssl rand -hex 32` 生成 JWT 密钥、`openssl rand -hex 16` 生成 **32 字符**的 `SYSTEM_AES_KEY`。妥善备份 `SYSTEM_AES_KEY`；更换它会导致数据库里已加密的模型 API Key 无法解密。`.env` 已被 Git 忽略，不要提交。示例环境文件自带 Langfuse 占位密钥，因此这里显式关闭可选的追踪功能；知识库上传、检索和问答不依赖它。
 
 第一次创建管理员账号后，把 `DISABLE_REGISTRATION` 改为 `true`，再执行 `docker compose up -d --no-build app`。需要其他人使用时，通过产品的账号与空间权限进行管理。
 

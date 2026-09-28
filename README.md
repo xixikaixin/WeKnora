@@ -49,6 +49,8 @@
 
 # 💡 WeKnora — Turn Documents into Living Knowledge with RAG, Agents and Auto-Wiki
 
+Alibaba Cloud deployment: [Standalone WeKnora guide](./docs/ALIYUN_ECS_DEPLOYMENT.md).
+
 ## 📌 Overview
 
 [**WeKnora**](https://weknora.weixin.qq.com) is an open-source, LLM-powered knowledge framework built for enterprise-grade document understanding, semantic retrieval, and autonomous reasoning.

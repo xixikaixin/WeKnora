@@ -49,6 +49,8 @@
 
 # 💡 WeKnora — 让文档活起来：RAG、Agent 推理与自动 Wiki 一体化的知识框架
 
+阿里云部署：[独立 WeKnora 部署文档](./docs/ALIYUN_ECS_DEPLOYMENT.md)。
+
 ## 📌 项目介绍
 
 **[WeKnora（维娜拉）](https://weknora.weixin.qq.com)** 是一款开源的、基于大语言模型（LLM）的知识管理框架，专为企业级文档理解、语义检索与智能推理场景打造。

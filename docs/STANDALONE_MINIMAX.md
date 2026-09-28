@@ -24,6 +24,14 @@ ollama pull qwen2.5vl:3b
 
 `docker-compose.yml` 中 `api.minimaxi.com` 的固定地址只用于绕过当前机器代理 DNS 返回的保留地址；公网 IP 变化后需重新核实，不能把它当作长期有效的地址。
 
+本机代理如果把微信 iLink 域名解析到 `198.18.0.0/15` fake-IP，微信扫码绑定会被 WeKnora 的 SSRF 检查拒绝。此时在本地 `.env` 中仅增加微信接口域名（保留 Compose 默认的服务名）：
+
+```dotenv
+SSRF_WHITELIST_EXTRA=searxng,qdrant,milvus,weaviate,doris-fe,doris-be,minio,ilinkai.weixin.qq.com
+```
+
+重建 `app` 容器后再生成二维码。不要把整个 `198.18.0.0/15` 网段加入白名单；若可调整代理 DNS，也可对该域名返回真实 IP。
+
 ## 界面设置与验收
 
 在 WeKnora 界面中创建知识库、上传资料，并确认“快速问答”的对话模型已选择 MiniMax。可上传 `website-docs/sample-data/weknora-kb-acceptance-sample.md` 测试事实、条件、例外和资料未覆盖时的回答。

@@ -2,15 +2,9 @@
 
 适用仓库：`git@codeup.aliyun.com:5fd336dac9b6991721d68f21/weknora.git` 的 `master` 分支。本文按**全新部署、不迁移本机数据**编写，使用 WeKnora 的界面管理资料和问答，不接入 realtime-speech。
 
-## 先区分两项阿里云服务
+## 部署方案
 
-截图中的「免费 720H」是**阿里云百炼托管 RAG 知识库**的规格试用：资料、切片和索引由百炼管理。当前 WeKnora 的检索后端不支持直接选择这项托管知识库；把它接到 WeKnora 需要另做 API 适配。该额度不能抵扣 ECS，也不能抵扣 WeKnora 调用的模型 API。模型调用按各模型规则单独计费或消耗对应的免费额度。
-
-如果目标只是利用 720 小时额度在线体验知识库，直接按[百炼 RAG 快速开始](https://help.aliyun.com/zh/model-studio/rag/quickstart)创建知识库，在 Playground 问答即可；那会是百炼产品，不是本仓库的 WeKnora 界面。百炼文档说明新用户的 720 小时额度自开通起 30 天内有效。
-
-本文采用更直接的方式：WeKnora 在 ECS 上运行，聊天用 MiniMax API，向量化和图片理解用**阿里云百炼模型 API**。不安装 Ollama，服务器不下载模型。WeKnora 的 PostgreSQL 和文件卷仍由 ECS 保存。
-
-参考：[百炼知识库计费](https://help.aliyun.com/zh/model-studio/billing-for-knowledge-base)、[百炼模型免费额度](https://help.aliyun.com/zh/model-studio/new-free-quota)、[WeKnora 模型管理](https://github.com/Tencent/WeKnora/blob/main/website-docs/03-features/06-models.md)。
+WeKnora 在 ECS 上运行，聊天使用 MiniMax API，向量化和图片理解使用阿里云百炼模型 API。不安装 Ollama，服务器不下载模型。PostgreSQL 和文件卷由 ECS 保存。模型配置方式见 [WeKnora 模型管理](https://github.com/Tencent/WeKnora/blob/main/website-docs/03-features/06-models.md)。
 
 ## 1. 准备服务器和域名
 

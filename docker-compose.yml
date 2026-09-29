@@ -41,6 +41,10 @@ services:
       - data-files:/data/files
       - docreader-tmp:/tmp/docreader:ro
       - ./config/config.yaml:/app/config/config.yaml
+      - ./config/prompt_templates/intent_prompts.yaml:/app/config/prompt_templates/intent_prompts.yaml:ro
+      - ./config/prompt_templates/system_prompt.yaml:/app/config/prompt_templates/system_prompt.yaml:ro
+      - ./config/prompt_templates/fallback.yaml:/app/config/prompt_templates/fallback.yaml:ro
+      - ./config/prompt_templates/agent_system_prompt.yaml:/app/config/prompt_templates/agent_system_prompt.yaml:ro
       # Optional: mount custom skills directory (allows adding skills without rebuilding image)
       - ./skills/preloaded:/app/skills/preloaded
       # Docker 沙箱默认关闭（见 WEKNORA_SANDBOX_DOCKER_ENABLED）。需要本机 daemon 时

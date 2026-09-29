@@ -77,13 +77,19 @@ docker run --rm \
   -v "$PWD/frontend:/work" -w /work \
   -e VITE_IS_DOCKER=true -e VITE_FRONTEND_COMMIT=codeup \
   node:22-bookworm sh -lc 'npm ci && npm run build'
-docker compose pull
+grep -F '<title>realtime-speech</title>' frontend/dist/index.html
+docker compose pull app docreader postgres redis
 docker compose build frontend
 docker compose up -d --no-build
+docker compose up -d --no-build --no-deps --force-recreate frontend
 docker compose ps
 curl -fsS http://127.0.0.1:8080/health
-curl -I http://127.0.0.1:8081/
+curl -fsS http://127.0.0.1:8081/ | grep -F '<title>realtime-speech</title>'
 ```
+
+前端镜像名为 `realtime-speech-knowledge-ui:local`，由本仓库的 `frontend/dist` 构建。不要拉取或运行官方 `wechatopenai/weknora-ui` 镜像。最后一条命令检查正在服务的页面标题；没有输出或仍显示 `WeKnora`，说明当前容器没有使用新前端，先检查 `docker compose images frontend` 和 `docker compose logs --tail=100 frontend`。
+
+已部署的服务器更新代码后，也要重新执行上述前端构建和启动命令；仅 `git pull` 或 `docker compose pull` 不会更新页面。浏览器仍显示旧图标时再强制刷新页面。
 
 等待 `app`、`docreader`、`postgres` 健康后再打开网页。若服务没有就绪，先看 `docker compose logs --tail=100 app docreader postgres`。不要用 `docker compose down -v` 停机；`-v` 会删除数据卷。
 

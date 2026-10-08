@@ -24,7 +24,7 @@ Page({
     const response = await createSession(settings.selectedKnowledgeBaseId);
     const sessionId = response.data?.id;
     if (!sessionId) {
-      throw new Error("The session API did not return a session id.");
+      throw new Error("创建会话失败：接口未返回会话 ID。");
     }
     this.setData({ sessionId });
     return sessionId;
@@ -40,12 +40,13 @@ Page({
       const answer = collectAnswerFromSSE(rawResponse);
       this.setData({
         answer,
-        rawResponse: answer ? "" : rawResponse
+        rawResponse
       });
     } catch (error) {
       wx.showModal({
-        title: "Chat failed",
+        title: "问答失败",
         content: error.message,
+        confirmText: "确定",
         showCancel: false
       });
     } finally {

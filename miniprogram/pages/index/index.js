@@ -95,16 +95,17 @@ Page({
         selectedKnowledgeBaseId: selected?.id || "",
         selectedKnowledgeBaseName: selected?.name || "",
         statusMessage: knowledgeBases.length
-          ? `Loaded ${knowledgeBases.length} knowledge bases.`
-          : "No knowledge bases found."
+          ? `已加载 ${knowledgeBases.length} 个知识库。`
+          : "暂无知识库。"
       });
       if (selected?.id) {
         saveSettings({ selectedKnowledgeBaseId: selected.id });
       }
     } catch (error) {
       wx.showModal({
-        title: "Load failed",
+        title: "加载失败",
         content: error.message,
+        confirmText: "确定",
         showCancel: false
       });
     } finally {
@@ -117,11 +118,12 @@ Page({
     try {
       await createKnowledgeFromURL(this.data.selectedKnowledgeBaseId, this.data.url.trim(), false);
       this.setData({ url: "" });
-      wx.showToast({ title: "Imported", icon: "success" });
+      wx.showToast({ title: "已导入", icon: "success" });
     } catch (error) {
       wx.showModal({
-        title: "Import failed",
+        title: "导入失败",
         content: error.message,
+        confirmText: "确定",
         showCancel: false
       });
     } finally {

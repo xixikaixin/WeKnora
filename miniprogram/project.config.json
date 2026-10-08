@@ -10,5 +10,6 @@
   "compileType": "miniprogram",
   "libVersion": "latest",
   "projectname": "WeKnora Mini Program",
-  "condition": {}
+  "condition": {},
+  "appid": "wx3a472917ed245d1c"
 }

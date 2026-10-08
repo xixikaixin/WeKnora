@@ -1,19 +1,19 @@
 <view class="page">
   <view class="card hero">
-    <view class="title">WeKnora Knowledge</view>
-    <view class="muted">Import a web page into a selected knowledge base from WeChat.</view>
+    <view class="title">WeKnora 知识库</view>
+    <view class="muted">选择知识库，将网页导入其中。</view>
   </view>
 
   <view class="card section">
     <view wx:if="{{needsSettings}}" class="notice">
-      Configure the WeKnora API base URL and API key before loading knowledge bases.
-      <button bindtap="openSettings" class="secondary">Open Settings</button>
+      请先配置 WeKnora 后端地址和 API 密钥，再加载知识库。
+      <button bindtap="openSettings" class="secondary">前往设置</button>
     </view>
 
     <view class="field">
-      <text class="label">Knowledge Base</text>
+      <text class="label">知识库</text>
       <picker range="{{knowledgeBaseNames}}" value="{{selectedIndex}}" bindchange="onKnowledgeBaseChange">
-        <view class="picker-value">{{selectedKnowledgeBaseName || "Tap to select"}}</view>
+        <view class="picker-value">{{selectedKnowledgeBaseName || "点击选择知识库"}}</view>
       </picker>
       <view wx:if="{{statusMessage}}" class="status-message">{{statusMessage}}</view>
       <view wx:if="{{knowledgeBaseNames.length}}" class="knowledge-list">
@@ -29,15 +29,15 @@
       </view>
     </view>
 
-    <button bindtap="loadKnowledgeBases" loading="{{loading}}">Refresh knowledge bases</button>
+    <button bindtap="loadKnowledgeBases" loading="{{loading}}">刷新知识库</button>
   </view>
 
   <view class="card section">
     <view class="field">
-      <text class="label">URL</text>
-      <input value="{{url}}" placeholder="https://github.com/Tencent/WeKnora" bindinput="onUrlInput" />
+      <text class="label">网页地址</text>
+      <input value="{{url}}" placeholder="请输入需要导入的网页地址" bindinput="onUrlInput" />
     </view>
 
-    <button bindtap="importURL" loading="{{importing}}" disabled="{{!selectedKnowledgeBaseId || !url}}">Import URL</button>
+    <button bindtap="importURL" loading="{{importing}}" disabled="{{!selectedKnowledgeBaseId || !url}}">导入网页</button>
   </view>
 </view>

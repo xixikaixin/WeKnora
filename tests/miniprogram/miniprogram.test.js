@@ -22,6 +22,63 @@ test("collectAnswerFromSSE joins answer chunks and skips references", () => {
   assert.equal(collectAnswerFromSSE(raw), "Hello");
 });
 
+test("collectAnswerFromSSE removes inline thinking after joining chunks", () => {
+  const cases = [
+    { chunks: ["普通回答"], expected: "普通回答" },
+    { chunks: ["<think>分析\n检索</think>\n正式回答"], expected: "正式回答" },
+    { chunks: ["<thi", "nk>分析</thi", "nk>正式回答"], expected: "正式回答" },
+    { chunks: ["正式回答<think>未完成的思考"], expected: "正式回答" },
+    { chunks: ["<think>只有思考"], expected: "" },
+    { chunks: ["<think>思考一</think>答案一<think>思考二</think>答案二"], expected: "答案一答案二" }
+  ];
+
+  for (const { chunks, expected } of cases) {
+    const raw = chunks.map((content) =>
+      `event: message\ndata: ${JSON.stringify({ response_type: "answer", content })}`
+    ).join("\n\n");
+    assert.equal(collectAnswerFromSSE(raw), expected, JSON.stringify(chunks));
+  }
+});
+
+test("chat page keeps raw responses for diagnosis and filters displayed answers", async () => {
+  const originalPage = global.Page;
+  const originalWx = global.wx;
+  let definition;
+  let rawResponse;
+  try {
+    global.Page = (page) => { definition = page; };
+    global.wx = {
+      getStorageSync() {
+        return { baseUrl: "https://weknora.example.com", apiKey: "sk-test" };
+      },
+      request(options) {
+        options.success({ statusCode: 200, data: rawResponse });
+      }
+    };
+    delete require.cache[require.resolve("../../miniprogram/pages/chat/chat.js")];
+    require("../../miniprogram/pages/chat/chat.js");
+
+    for (const [content, expected] of [
+      ["<think>分析</think>正式回答", "正式回答"],
+      ["<think>未完成的思考", ""]
+    ]) {
+      rawResponse = `event: message\ndata: ${JSON.stringify({ response_type: "answer", content })}\n\n`;
+      const page = {
+        data: { ...definition.data, query: "测试问题" },
+        async ensureSession() { return "session-test"; },
+        setData(nextData) { this.data = { ...this.data, ...nextData }; }
+      };
+      await definition.ask.call(page);
+      assert.equal(page.data.answer, expected);
+      assert.equal(page.data.rawResponse, rawResponse);
+      assert.equal(page.data.loading, false);
+    }
+  } finally {
+    global.Page = originalPage;
+    global.wx = originalWx;
+  }
+});
+
 test("normalizeBaseUrl trims trailing slashes", () => {
   assert.equal(normalizeBaseUrl(" https://example.com/// "), "https://example.com");
 });
@@ -83,6 +140,50 @@ test("URL import helper posts the selected URL payload", async () => {
     url: "https://github.com/Tencent/WeKnora",
     enable_multimodel: true
   });
+});
+
+test("API helpers explain invalid API keys without exposing the key", async () => {
+  const originalWx = global.wx;
+  try {
+    global.wx = {
+      getStorageSync() {
+        return { baseUrl: "https://weknora.example.com", apiKey: "sk-invalid-test" };
+      },
+      request(options) {
+        options.success({
+          statusCode: 401,
+          data: { error: "Unauthorized: invalid API key" }
+        });
+      }
+    };
+    await assert.rejects(listKnowledgeBases(), {
+      message: "API 密钥无效或已失效，请在设置中更新此后端的工作区 API 密钥。"
+    });
+  } finally {
+    global.wx = originalWx;
+  }
+});
+
+test("API helpers preserve string error responses from the backend", async () => {
+  const originalWx = global.wx;
+  try {
+    global.wx = {
+      getStorageSync() {
+        return { baseUrl: "https://weknora.example.com", apiKey: "sk-test" };
+      },
+      request(options) {
+        options.success({
+          statusCode: 401,
+          data: { error: "Unauthorized: missing authentication" }
+        });
+      }
+    };
+    await assert.rejects(listKnowledgeBases(), {
+      message: "Unauthorized: missing authentication"
+    });
+  } finally {
+    global.wx = originalWx;
+  }
 });
 
 test("chat helper includes selected knowledge base ids", async () => {

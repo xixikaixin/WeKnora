@@ -23,7 +23,7 @@ function parseSSE(raw) {
 }
 
 function collectAnswerFromSSE(raw) {
-  return parseSSE(raw).reduce((answer, event) => {
+  const answer = parseSSE(raw).reduce((answer, event) => {
     try {
       const payload = JSON.parse(event.data);
       if (payload.response_type === "answer" && payload.content) {
@@ -34,6 +34,7 @@ function collectAnswerFromSSE(raw) {
     }
     return answer;
   }, "");
+  return answer.replace(/<think>[\s\S]*?(?:<\/think>|$)/g, "").trim();
 }
 
 module.exports = {

@@ -3,10 +3,10 @@ const { getSettings } = require("./config");
 function request(path, options = {}) {
   const settings = getSettings();
   if (!settings.baseUrl) {
-    return Promise.reject(new Error("Please configure the WeKnora API base URL first."));
+    return Promise.reject(new Error("请先配置 WeKnora 后端地址。"));
   }
   if (!settings.apiKey) {
-    return Promise.reject(new Error("Please configure the WeKnora API key first."));
+    return Promise.reject(new Error("请先配置 WeKnora API 密钥。"));
   }
 
   return new Promise((resolve, reject) => {
@@ -24,11 +24,17 @@ function request(path, options = {}) {
           resolve(response.data);
           return;
         }
-        const message = response.data?.error?.message || response.data?.message || `HTTP ${response.statusCode}`;
+        const serverError = response.data?.error;
+        const message = (typeof serverError === "string" ? serverError : serverError?.message)
+          || response.data?.message || `HTTP ${response.statusCode}`;
+        if (message === "Unauthorized: invalid API key") {
+          reject(new Error("API 密钥无效或已失效，请在设置中更新此后端的工作区 API 密钥。"));
+          return;
+        }
         reject(new Error(message));
       },
       fail(error) {
-        reject(new Error(error.errMsg || "Network request failed."));
+        reject(new Error(error.errMsg || "网络请求失败。"));
       }
     });
   });

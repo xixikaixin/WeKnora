@@ -18,15 +18,15 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "Knowledge"
+        "text": "知识库"
       },
       {
         "pagePath": "pages/chat/chat",
-        "text": "Chat"
+        "text": "问答"
       },
       {
         "pagePath": "pages/settings/settings",
-        "text": "Settings"
+        "text": "设置"
       }
     ]
   }
